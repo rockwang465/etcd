@@ -40,17 +40,17 @@ var (
 )
 
 func startEtcdOrProxyV2(args []string) {
-	grpc.EnableTracing = false
+	grpc.EnableTracing = false  // 设置EnableTracing为true启动埋点
 
 	cfg := newConfig()
 	defaultInitialCluster := cfg.ec.InitialCluster
 
 	err := cfg.parse(args[1:])
-	lg := cfg.ec.GetLogger()
+	lg := cfg.ec.GetLogger()  // 先实例化一个logger
 	// If we failed to parse the whole configuration, print the error using
 	// preferably the resolved logger from the config,
 	// but if does not exists, create a new temporary logger.
-	if lg == nil {
+	if lg == nil { // logger没实例化成功，则实例化一个default logger
 		var zapError error
 		// use this logger
 		lg, zapError = logutil.CreateDefaultZapLogger(zap.InfoLevel)
@@ -69,12 +69,12 @@ func startEtcdOrProxyV2(args []string) {
 		os.Exit(1)
 	}
 
-	cfg.ec.SetupGlobalLoggers()
+	cfg.ec.SetupGlobalLoggers()  // 将全局的 logger 替换为我们通过配置定制的 logger
 
 	defer func() {
 		logger := cfg.ec.GetLogger()
 		if logger != nil {
-			logger.Sync()
+			logger.Sync()  // 将 buffer 中的日志写到文件中
 		}
 	}()
 

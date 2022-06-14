@@ -140,7 +140,7 @@ func init() {
 	defaultHostname, defaultHostStatus = netutil.GetDefaultHost()
 }
 
-// Config holds the arguments for configuring an etcd server.
+// Config holds the arguments for configuring an etcd server.  // etcd服务器的配置参数
 type Config struct {
 	Name   string `json:"name"`
 	Dir    string `json:"data-dir"`
@@ -163,9 +163,12 @@ type Config struct {
 	// TickMs is the number of milliseconds between heartbeat ticks.
 	// TODO: decouple tickMs and heartbeat tick (current heartbeat tick = 1).
 	// make ticks a cluster wide configuration.
-	TickMs     uint `json:"heartbeat-interval"`
+	TickMs     uint `json:"heartbeat-interval"`  // 心跳间隔毫秒数
 	ElectionMs uint `json:"election-timeout"`
 
+	// InitialElectionTickAdvance为true，则本地成员快速前进选举，以加快“初始”领导人选举触发。
+	// 这对更大规模的选举有利。 例如，跨数据中心部署可能需要更长的选举超时，为10秒。
+	// 如果为true，本地节点不需要等待10秒。 相反，将选举时间延长到8秒，离领导人选举只有2秒了。
 	// InitialElectionTickAdvance is true, then local member fast-forwards
 	// election ticks to speed up "initial" leader election trigger. This
 	// benefits the case of larger election ticks. For instance, cross
